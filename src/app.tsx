@@ -33,7 +33,7 @@ const App = (props: { store: Store }) => {
   }, []);
   const render = () => (
     <>
-      <Title>Untitled App</Title>
+      <Title>KLineChart Demo</Title>
       <div id="chart"></div>
     </>
   );
