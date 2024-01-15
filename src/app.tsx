@@ -17,6 +17,7 @@ const App = (props: { store: Store }) => {
   const [companyName, setCompanyName] = useState('');
   const [companyDescription, setCompanyDescription] = useState('');
   const [iconUrl, setIconUrl] = useState('');
+  const [news, setNews] = useState([] as { id: string; title: string; article_url: string; published_utc: string }[]);
   const render = () => (
     <>
       <Title>KLineChart Demo</Title>
@@ -28,6 +29,7 @@ const App = (props: { store: Store }) => {
         <Input onChange={(e) => setTo(e.target.value)} value={to}></Input>
         <Button
           onClick={async () => {
+            // chart
             dispose('chart');
             const chart = init('chart', { timezone: 'America/New_York', locale: 'en-US' })!;
             let r = await axios.get(
@@ -44,6 +46,8 @@ const App = (props: { store: Store }) => {
                 turnover: data.vw,
               })),
             );
+
+            // company
             r = await axios.get(
               `https://api.polygon.io/v3/reference/tickers/${ticker}?apiKey=${process.env.POLYGON_API_KEY}`,
             );
@@ -51,6 +55,12 @@ const App = (props: { store: Store }) => {
             setCompanyName(tickerInfo.name);
             setCompanyDescription(tickerInfo.description);
             setIconUrl(tickerInfo.branding.icon_url);
+
+            // news
+            r = await axios.get(
+              `https://api.polygon.io/v2/reference/news?ticker=${ticker}&apiKey=${process.env.POLYGON_API_KEY}&limit=1000`,
+            );
+            setNews(r.data.results);
           }}
         >
           Apply
@@ -65,6 +75,24 @@ const App = (props: { store: Store }) => {
           <img src={`${iconUrl}?apiKey=${process.env.POLYGON_API_KEY}`} alt="icon" className="inline-image" />
         )}
         {companyDescription}
+      </Paragraph>
+      <Paragraph>
+        <ul>
+          {news.map((n) => (
+            <li key={n.id}>
+              <Space>
+                <a href={n.article_url} target="_blank">
+                  {n.title}
+                </a>
+                {new Intl.DateTimeFormat('en-US', {
+                  timeZone: 'America/New_York',
+                  dateStyle: 'short',
+                  timeStyle: 'short',
+                }).format(new Date(n.published_utc))}
+              </Space>
+            </li>
+          ))}
+        </ul>
       </Paragraph>
     </>
   );

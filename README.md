@@ -1,5 +1,11 @@
 # KLineChart Demo
 
+
+## Notes
+
+- All time timezone used is `America/New_York`, which is used by the stock market.
+
+
 ## Reference
 
 - https://medium.com/coinmonks/detecting-price-channels-in-python-c53fdae46fe3
