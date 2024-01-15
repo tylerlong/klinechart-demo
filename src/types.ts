@@ -11,3 +11,19 @@ export interface News {
   published_utc: string;
   publisher: { name: string };
 }
+
+export interface AggregateBarsParams {
+  ticker: string;
+  multiplier: number;
+  timespan: string;
+  from: string;
+  to: string;
+}
+
+export interface TickerDetailsParams {
+  ticker: string;
+}
+
+export interface TickerNewsParams {
+  ticker: string;
+}

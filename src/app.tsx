@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Button, Input, Space, Typography, Divider } from 'antd';
 import { auto } from 'manate/react';
 import { init, dispose } from 'klinecharts';
-import axios from 'axios';
 
 import type { Store } from './store';
 import type { Company, News } from './types';
+import polygon from './polygon';
 
 const { Title, Paragraph } = Typography;
 
@@ -28,14 +28,22 @@ const App = (props: { store: Store }) => {
         <Input onChange={(e) => setTo(e.target.value)} value={to}></Input>
         <Button
           onClick={async () => {
-            // chart
+            // clean
             dispose('chart');
+            setCompany(undefined);
+            setNews([]);
+
+            // chart
             const chart = init('chart', { timezone: 'America/New_York', locale: 'en-US' })!;
-            let r = await axios.get(
-              `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/${multiplier}/${timespan}/${from}/${to}?apiKey=${process.env.POLYGON_API_KEY}&limit=50000`,
-            );
+            const aggregatesBars = await polygon.aggregatesBars({
+              ticker,
+              multiplier: parseInt(multiplier, 10),
+              timespan,
+              from,
+              to,
+            });
             chart.applyNewData(
-              r.data.results.map((data: any) => ({
+              aggregatesBars.map((data: any) => ({
                 timestamp: data.t,
                 open: data.o,
                 high: data.h,
@@ -47,16 +55,10 @@ const App = (props: { store: Store }) => {
             );
 
             // company
-            r = await axios.get(
-              `https://api.polygon.io/v3/reference/tickers/${ticker}?apiKey=${process.env.POLYGON_API_KEY}`,
-            );
-            setCompany(r.data.results);
+            setCompany(await polygon.tickerDetail({ ticker }));
 
             // news
-            r = await axios.get(
-              `https://api.polygon.io/v2/reference/news?ticker=${ticker}&apiKey=${process.env.POLYGON_API_KEY}&limit=1000`,
-            );
-            setNews(r.data.results);
+            setNews(await polygon.tickerNews({ ticker }));
           }}
         >
           Apply

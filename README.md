@@ -1,10 +1,8 @@
 # KLineChart Demo
 
-
 ## Notes
 
 - All time timezone used is `America/New_York`, which is used by the stock market.
-
 
 ## Reference
 
