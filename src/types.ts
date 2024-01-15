@@ -1,10 +1,20 @@
-export interface Company {
+export interface AggregatesBar {
+  t: number;
+  o: number;
+  h: number;
+  l: number;
+  c: number;
+  v: number;
+  vw: number;
+}
+
+export interface TickerDetail {
   name: string;
   description: string;
   branding: { icon_url: string };
 }
 
-export interface News {
+export interface TickerNews {
   id: string;
   title: string;
   article_url: string;
@@ -12,7 +22,7 @@ export interface News {
   publisher: { name: string };
 }
 
-export interface AggregateBarsParams {
+export interface AggregatesBarsParams {
   ticker: string;
   multiplier: number;
   timespan: string;

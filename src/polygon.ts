@@ -1,7 +1,14 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 
-import type { AggregateBarsParams as AggregatesBarsParams, TickerDetailsParams, TickerNewsParams } from './types';
+import type {
+  AggregatesBar,
+  AggregatesBarsParams,
+  TickerDetail,
+  TickerDetailsParams,
+  TickerNews,
+  TickerNewsParams,
+} from './types';
 
 class Polygon {
   private axios: AxiosInstance;
@@ -14,7 +21,7 @@ class Polygon {
     });
   }
 
-  public async aggregatesBars(params: AggregatesBarsParams) {
+  public async aggregatesBars(params: AggregatesBarsParams): Promise<AggregatesBar[]> {
     const r = await this.axios.get(
       `/v2/aggs/ticker/${params.ticker}/range/${params.multiplier}/${params.timespan}/${params.from}/${params.to}`,
       { params: { limit: 50000 } },
@@ -22,12 +29,12 @@ class Polygon {
     return r.data.results;
   }
 
-  public async tickerDetail(params: TickerDetailsParams) {
+  public async tickerDetail(params: TickerDetailsParams): Promise<TickerDetail> {
     const r = await this.axios.get(`/v3/reference/tickers/${params.ticker}`);
     return r.data.results;
   }
 
-  public async tickerNews(params: TickerNewsParams) {
+  public async tickerNews(params: TickerNewsParams): Promise<TickerNews[]> {
     const r = await this.axios.get(`/v2/reference/news?ticker=${params.ticker}`, { params: { limit: 1000 } });
     return r.data.results;
   }

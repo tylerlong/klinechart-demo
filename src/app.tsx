@@ -4,7 +4,7 @@ import { auto } from 'manate/react';
 import { init, dispose } from 'klinecharts';
 
 import type { Store } from './store';
-import type { Company, News } from './types';
+import type { TickerDetail, TickerNews } from './types';
 import polygon from './polygon';
 
 const { Title, Paragraph } = Typography;
@@ -15,8 +15,8 @@ const App = (props: { store: Store }) => {
   const [timespan, setTimespan] = useState('day');
   const [from, setFrom] = useState('2000-01-01');
   const [to, setTo] = useState('2030-01-01');
-  const [company, setCompany] = useState(undefined as Company | undefined);
-  const [news, setNews] = useState([] as News[]);
+  const [ticketDetail, setTickerDetail] = useState(undefined as TickerDetail | undefined);
+  const [tickerNews, setTickerNews] = useState([] as TickerNews[]);
   const render = () => (
     <>
       <Title>KLineChart Demo</Title>
@@ -30,8 +30,8 @@ const App = (props: { store: Store }) => {
           onClick={async () => {
             // clean
             dispose('chart');
-            setCompany(undefined);
-            setNews([]);
+            setTickerDetail(undefined);
+            setTickerNews([]);
 
             // chart
             const chart = init('chart', { timezone: 'America/New_York', locale: 'en-US' })!;
@@ -43,22 +43,22 @@ const App = (props: { store: Store }) => {
               to,
             });
             chart.applyNewData(
-              aggregatesBars.map((data: any) => ({
-                timestamp: data.t,
-                open: data.o,
-                high: data.h,
-                low: data.l,
-                close: data.c,
-                volume: data.v,
-                turnover: data.vw,
+              aggregatesBars.map((ab) => ({
+                timestamp: ab.t,
+                open: ab.o,
+                high: ab.h,
+                low: ab.l,
+                close: ab.c,
+                volume: ab.v,
+                turnover: ab.vw,
               })),
             );
 
-            // company
-            setCompany(await polygon.tickerDetail({ ticker }));
+            // ticker detail
+            setTickerDetail(await polygon.tickerDetail({ ticker }));
 
-            // news
-            setNews(await polygon.tickerNews({ ticker }));
+            // ticker news
+            setTickerNews(await polygon.tickerNews({ ticker }));
           }}
         >
           Apply
@@ -69,25 +69,25 @@ const App = (props: { store: Store }) => {
 
       <Divider />
 
-      {company && (
+      {ticketDetail && (
         <>
-          <Title level={2}>{company.name}</Title>
+          <Title level={2}>{ticketDetail.name}</Title>
           <Paragraph>
-            {company.branding.icon_url && (
+            {ticketDetail.branding.icon_url && (
               <img
-                src={`${company.branding.icon_url}?apiKey=${process.env.POLYGON_API_KEY}`}
-                alt={`${company.name} icon`}
+                src={`${ticketDetail.branding.icon_url}?apiKey=${process.env.POLYGON_API_KEY}`}
+                alt={`${ticketDetail.name} icon`}
                 className="inline-image"
               />
             )}
-            {company.description}
+            {ticketDetail.description}
           </Paragraph>
         </>
       )}
 
       <Paragraph>
         <ul>
-          {news.map((n) => (
+          {tickerNews.map((n) => (
             <li key={n.id}>
               <Space>
                 <a href={n.article_url} target="_blank">
