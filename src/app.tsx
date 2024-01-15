@@ -5,19 +5,18 @@ import { init, dispose } from 'klinecharts';
 import axios from 'axios';
 
 import type { Store } from './store';
+import type { Company, News } from './types';
 
 const { Title, Paragraph } = Typography;
 
 const App = (props: { store: Store }) => {
-  const [ticker, setTicker] = useState('AAPL');
+  const [ticker, setTicker] = useState('TSLA');
   const [multiplier, setMultiplier] = useState('1');
   const [timespan, setTimespan] = useState('day');
   const [from, setFrom] = useState('2000-01-01');
   const [to, setTo] = useState('2030-01-01');
-  const [companyName, setCompanyName] = useState('');
-  const [companyDescription, setCompanyDescription] = useState('');
-  const [iconUrl, setIconUrl] = useState('');
-  const [news, setNews] = useState([] as { id: string; title: string; article_url: string; published_utc: string }[]);
+  const [company, setCompany] = useState(undefined as Company | undefined);
+  const [news, setNews] = useState([] as News[]);
   const render = () => (
     <>
       <Title>KLineChart Demo</Title>
@@ -51,10 +50,7 @@ const App = (props: { store: Store }) => {
             r = await axios.get(
               `https://api.polygon.io/v3/reference/tickers/${ticker}?apiKey=${process.env.POLYGON_API_KEY}`,
             );
-            const tickerInfo = r.data.results;
-            setCompanyName(tickerInfo.name);
-            setCompanyDescription(tickerInfo.description);
-            setIconUrl(tickerInfo.branding.icon_url);
+            setCompany(r.data.results);
 
             // news
             r = await axios.get(
@@ -68,14 +64,25 @@ const App = (props: { store: Store }) => {
       </Space>
       <Divider />
       <div id="chart"></div>
+
       <Divider />
-      <Title level={2}>{companyName}</Title>
-      <Paragraph>
-        {iconUrl && (
-          <img src={`${iconUrl}?apiKey=${process.env.POLYGON_API_KEY}`} alt="icon" className="inline-image" />
-        )}
-        {companyDescription}
-      </Paragraph>
+
+      {company && (
+        <>
+          <Title level={2}>{company.name}</Title>
+          <Paragraph>
+            {company.branding.icon_url && (
+              <img
+                src={`${company.branding.icon_url}?apiKey=${process.env.POLYGON_API_KEY}`}
+                alt={`${company.name} icon`}
+                className="inline-image"
+              />
+            )}
+            {company.description}
+          </Paragraph>
+        </>
+      )}
+
       <Paragraph>
         <ul>
           {news.map((n) => (
@@ -89,6 +96,7 @@ const App = (props: { store: Store }) => {
                   dateStyle: 'short',
                   timeStyle: 'short',
                 }).format(new Date(n.published_utc))}
+                {n.publisher.name}
               </Space>
             </li>
           ))}
