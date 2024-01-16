@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Input, Space, Typography, Divider, InputNumber, Select } from 'antd';
+import { Button, Input, Space, Typography, Divider, InputNumber, Select, DatePicker } from 'antd';
 import { auto } from 'manate/react';
 import { init, dispose } from 'klinecharts';
 import type { ITickerDetails, ITickerNews } from '@polygon.io/client-js';
+import dayjs from 'dayjs';
 
 import type { Store } from './store';
 import polygon from './polygon';
@@ -14,16 +15,16 @@ const App = (props: { store: Store }) => {
   const [ticker, setTicker] = useState('TSLA');
   const [multiplier, setMultiplier] = useState(1 as number);
   const [timespan, setTimespan] = useState('day' as TimeSpan);
-  const [from, setFrom] = useState('2000-01-01');
-  const [to, setTo] = useState('2030-01-01');
+  const [from, setFrom] = useState(dayjs('2000-01-01'));
+  const [to, setTo] = useState(dayjs('2030-01-01'));
   const [ticketDetail, setTickerDetail] = useState(undefined as ITickerDetails | undefined);
   const [tickerNews, setTickerNews] = useState(undefined as ITickerNews | undefined);
   const render = () => (
     <>
       <Title>KLineChart Demo</Title>
       <Space>
-        <Input onChange={(e) => setTicker(e.target.value.toUpperCase())} value={ticker}></Input>
-        <InputNumber min={1} step={1} value={multiplier} onChange={(v) => setMultiplier(v!)} />
+        <Input onChange={(e) => setTicker(e.target.value.toUpperCase())} value={ticker} required></Input>
+        <InputNumber min={1} step={1} value={multiplier} onChange={(v) => setMultiplier(v!)} required />
         <Select
           style={{ width: 128 }}
           options={[
@@ -39,9 +40,10 @@ const App = (props: { store: Store }) => {
           value={timespan}
           onChange={(v) => setTimespan(v)}
         ></Select>
-        <Input onChange={(e) => setFrom(e.target.value)} value={from}></Input>
-        <Input onChange={(e) => setTo(e.target.value)} value={to}></Input>
+        <DatePicker onChange={(d) => setFrom(d!)} value={from}></DatePicker>
+        <DatePicker onChange={(d) => setTo(d!)} value={to}></DatePicker>
         <Button
+          type="primary"
           onClick={async () => {
             // clean
             dispose('chart');
@@ -50,9 +52,16 @@ const App = (props: { store: Store }) => {
 
             // chart
             const chart = init('chart', { timezone: 'America/New_York', locale: 'en-US' })!;
-            const aggs = await polygon.stocks.aggregates(ticker, multiplier, timespan, from, to, {
-              limit: 50000,
-            });
+            const aggs = await polygon.stocks.aggregates(
+              ticker,
+              multiplier,
+              timespan,
+              from.format('YYYY-MM-DD'),
+              to.format('YYYY-MM-DD'),
+              {
+                limit: 50000,
+              },
+            );
             chart.applyNewData(
               aggs.results!.map((item) => ({
                 timestamp: item.t!,
