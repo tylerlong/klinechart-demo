@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Button, Input, Space, Typography, Divider, InputNumber, Select, DatePicker } from 'antd';
 import { auto } from 'manate/react';
 import { init, dispose } from 'klinecharts';
-import type { ITickerDetails, ITickerNews } from '@polygon.io/client-js';
+import type { IStockFinancialResults, ITickerDetails, ITickerNews } from '@polygon.io/client-js';
 import dayjs from 'dayjs';
 
 import type { Store } from './store';
 import polygon from './polygon';
 import type { TimeSpan } from './types';
+import { financial } from './financials';
+import { formatDateTime } from './utils';
 
 const { Title, Paragraph } = Typography;
 
@@ -19,6 +21,7 @@ const App = (props: { store: Store }) => {
   const [to, setTo] = useState(dayjs('2030-01-01'));
   const [ticketDetail, setTickerDetail] = useState(undefined as ITickerDetails | undefined);
   const [tickerNews, setTickerNews] = useState(undefined as ITickerNews | undefined);
+  const [stockFinancials, setStockFinancials] = useState(undefined as IStockFinancialResults | undefined);
   const render = () => (
     <>
       <Title>KLineChart Demo</Title>
@@ -79,6 +82,9 @@ const App = (props: { store: Store }) => {
 
             // ticker news
             setTickerNews(await polygon.reference.tickerNews({ ticker, limit: 100 }));
+
+            // financial
+            setStockFinancials(await polygon.reference.stockFinancials({ ticker }));
           }}
         >
           Apply
@@ -86,9 +92,7 @@ const App = (props: { store: Store }) => {
       </Space>
       <Divider />
       <div id="chart"></div>
-
       <Divider />
-
       {ticketDetail?.results && (
         <>
           <Title level={2}>{ticketDetail.results?.name}</Title>
@@ -104,9 +108,8 @@ const App = (props: { store: Store }) => {
           </Paragraph>
         </>
       )}
-
+      {stockFinancials && financial(stockFinancials)}
       <Divider />
-
       <Paragraph>
         <ul>
           {tickerNews?.results.map((n) => (
@@ -115,11 +118,7 @@ const App = (props: { store: Store }) => {
                 <a href={n.article_url} target="_blank">
                   {n.title}
                 </a>
-                {new Intl.DateTimeFormat('en-US', {
-                  timeZone: 'America/New_York',
-                  dateStyle: 'short',
-                  timeStyle: 'short',
-                }).format(new Date(n.published_utc))}
+                {formatDateTime(n.published_utc)}
                 {n.publisher.name}
               </Space>
             </li>
