@@ -1,31 +1,27 @@
 import type { IStockFinancialResults } from '@polygon.io/client-js';
 import { Descriptions } from 'antd';
 import React from 'react';
+import { capitalCase } from 'change-case';
+
 import { formatNumber } from './utils';
 
+interface Item {
+  order: number;
+  label: string;
+  unit: string;
+  value: number;
+}
+
 export const financial = (r: IStockFinancialResults) => {
-  const results: React.JSX.Element[] = [];
-  const balance_sheet = r.results?.[0].financials.balance_sheet;
-  if (balance_sheet) {
-    const items = Object.values(balance_sheet)
+  const sections = ['income_statement', 'balance_sheet', 'cash_flow_statement', 'comprehensive_income'];
+  return sections.map((section) => {
+    const items = Object.values<Item>(r.results?.[0].financials[section])
       .sort((a, b) => a.order - b.order)
       .map(({ label, value, unit }) => ({
         label,
         key: label,
         children: `${formatNumber(value)} ${unit}`,
       }));
-    results.push(<Descriptions key="balance_sheet" title="Blance Sheet" items={items} />);
-  }
-  const cash_flow_statement = r.results?.[0].financials.cash_flow_statement;
-  if (cash_flow_statement) {
-    const items = Object.values(cash_flow_statement)
-      .sort((a, b) => a.order - b.order)
-      .map(({ label, value, unit }) => ({
-        label,
-        key: label,
-        children: `${formatNumber(value)} ${unit}`,
-      }));
-    results.push(<Descriptions key="cash_flow_statement" title="Cash Flow Statement" items={items} />);
-  }
-  return results;
+    return <Descriptions column={2} key={section} title={capitalCase(section)} items={items} />;
+  });
 };

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@polygon.io/client-js": "^7.3.2",
+    "change-case": "^5.4.2",
     "klinecharts": "^9.7.2"
   },
   "devDependencies": {
