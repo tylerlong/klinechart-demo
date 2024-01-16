@@ -8,16 +8,16 @@
     "serve": "rm -rf .parcel-cache && parcel src/index.html --dist-dir docs"
   },
   "dependencies": {
-    "axios": "^1.6.5",
+    "@polygon.io/client-js": "^7.3.2",
     "klinecharts": "^9.7.2"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
+    "@types/node": "^20.11.3",
     "@types/react-dom": "^18.2.18",
-    "@typescript-eslint/eslint-plugin": "^6.18.1",
-    "@typescript-eslint/parser": "^6.18.1",
-    "antd": "^5.13.0",
-    "buffer": "^5.5.0||^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "antd": "^5.13.1",
+    "buffer": "^6.0.3",
     "dotenv-override-true": "^6.2.2",
     "eslint": "^8.56.0",
     "eslint-config-alloy": "^5.1.2",
