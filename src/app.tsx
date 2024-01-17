@@ -17,7 +17,7 @@ const App = (props: { store: Store }) => {
   const [ticker, setTicker] = useState('TSLA');
   const [multiplier, setMultiplier] = useState(1 as number);
   const [timespan, setTimespan] = useState('day' as TimeSpan);
-  const [from, setFrom] = useState(dayjs('2000-01-01'));
+  const [from, setFrom] = useState(dayjs('2020-01-01'));
   const [to, setTo] = useState(dayjs('2030-01-01'));
   const [ticketDetail, setTickerDetail] = useState(undefined as ITickerDetails | undefined);
   const [tickerNews, setTickerNews] = useState(undefined as ITickerNews | undefined);
@@ -76,6 +76,7 @@ const App = (props: { store: Store }) => {
                 turnover: item.vw,
               })),
             );
+            chart.createIndicator('VOL');
 
             // ticker detail
             setTickerDetail(await polygon.reference.tickerDetails(ticker));
@@ -108,7 +109,6 @@ const App = (props: { store: Store }) => {
           </Paragraph>
         </>
       )}
-      {stockFinancials && financial(stockFinancials)}
       <Divider />
       <Paragraph>
         <ul>
@@ -125,6 +125,7 @@ const App = (props: { store: Store }) => {
           ))}
         </ul>
       </Paragraph>
+      {stockFinancials && financial(stockFinancials)}
     </>
   );
   return auto(render, props);
