@@ -10,9 +10,11 @@ import polygon from './polygon';
 import type { TimeSpan } from './types';
 import { financial } from './financials';
 import { formatDateTime } from './utils';
-import vol60 from './indicators/volume-60';
+import vol60 from './indicators/vol-60';
+import ma50200 from './indicators/ma-50-200';
 
 registerIndicator(vol60);
+registerIndicator(ma50200);
 const { Title, Paragraph } = Typography;
 
 const App = (props: { store: Store }) => {
@@ -81,7 +83,7 @@ const App = (props: { store: Store }) => {
 
             // indicators
             chart.createIndicator('VOL60');
-            chart.createIndicator('MA');
+            chart.createIndicator('MA50200');
 
             // ticker detail
             setTickerDetail(await polygon.reference.tickerDetails(ticker));

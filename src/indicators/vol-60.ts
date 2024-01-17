@@ -13,22 +13,18 @@ import { utils } from 'klinecharts';
 interface Vol {
   volume?: number;
   ma1?: number;
-  ma2?: number;
-  ma3?: number;
 }
 
 const volume: IndicatorTemplate<Vol> = {
   name: 'VOL60',
   shortName: 'VOL',
   series: IndicatorSeries.Volume,
-  calcParams: [5, 20, 60],
+  calcParams: [60],
   shouldFormatBigNumber: true,
   precision: 0,
   minValue: 0,
   figures: [
-    { key: 'ma1', title: 'MA5: ', type: 'line' },
-    { key: 'ma2', title: 'MA20: ', type: 'line' },
-    { key: 'ma3', title: 'MA60: ', type: 'line' },
+    { key: 'ma1', title: 'MA60: ', type: 'line' },
     {
       key: 'volume',
       title: 'VOLUME: ',

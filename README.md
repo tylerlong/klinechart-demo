@@ -21,3 +21,4 @@
 ## Todo
 
 - Display percentage change in the chart.
+- Create a elecron with multiple tabs, each tab is a data source, like this website and Yahoo Finance.
