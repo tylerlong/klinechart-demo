@@ -13,6 +13,9 @@ interface Item {
 }
 
 export const financial = (r: IStockFinancialResults) => {
+  if (r.results?.length === 0) {
+    return null;
+  }
   const sections = ['income_statement', 'balance_sheet', 'cash_flow_statement', 'comprehensive_income'];
   return sections.map((section) => {
     const items = Object.values<Item>(r.results?.[1].financials[section]) // [1] because we need the data for the last quarter

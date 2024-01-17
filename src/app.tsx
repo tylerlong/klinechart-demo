@@ -111,6 +111,13 @@ const App = (props: { store: Store }) => {
       )}
       <Divider />
       <Paragraph>
+        Check{' '}
+        <a href={`https://finance.yahoo.com/quote/${ticker}`} target="_blank">
+          {ticker} on Yahoo Finance
+        </a>
+        .
+      </Paragraph>
+      <Paragraph>
         <ul>
           {tickerNews?.results.map((n) => (
             <li key={n.id}>
@@ -126,6 +133,19 @@ const App = (props: { store: Store }) => {
         </ul>
       </Paragraph>
       {stockFinancials && financial(stockFinancials)}
+      <Paragraph>
+        <Title level={2}>Quick References</Title>
+        <ul>
+          <li>
+            <a
+              href="https://www.barchart.com/stocks/highs-lows?timeFrame=1y&orderBy=volume&orderDir=desc"
+              target="_blank"
+            >
+              52-week highs
+            </a>
+          </li>
+        </ul>
+      </Paragraph>
     </>
   );
   return auto(render, props);
