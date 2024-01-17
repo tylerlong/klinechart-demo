@@ -21,4 +21,3 @@
 ## Todo
 
 - Display percentage change in the chart.
-- VOL indicator to display MA100

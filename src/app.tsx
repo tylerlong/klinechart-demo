@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, Space, Typography, Divider, InputNumber, Select, DatePicker } from 'antd';
 import { auto } from 'manate/react';
-import { init, dispose } from 'klinecharts';
+import { init, dispose, registerIndicator } from 'klinecharts';
 import type { IStockFinancialResults, ITickerDetails, ITickerNews } from '@polygon.io/client-js';
 import dayjs from 'dayjs';
 
@@ -10,7 +10,9 @@ import polygon from './polygon';
 import type { TimeSpan } from './types';
 import { financial } from './financials';
 import { formatDateTime } from './utils';
+import vol60 from './indicators/volume-60';
 
+registerIndicator(vol60);
 const { Title, Paragraph } = Typography;
 
 const App = (props: { store: Store }) => {
@@ -76,7 +78,10 @@ const App = (props: { store: Store }) => {
                 turnover: item.vw,
               })),
             );
-            chart.createIndicator('VOL');
+
+            // indicators
+            chart.createIndicator('VOL60');
+            chart.createIndicator('MA');
 
             // ticker detail
             setTickerDetail(await polygon.reference.tickerDetails(ticker));
