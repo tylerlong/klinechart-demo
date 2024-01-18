@@ -4,19 +4,23 @@ import { IndicatorSeries } from 'klinecharts';
 
 interface Ema {
   ema1?: number;
+  ema2?: number;
 }
 
 /**
  * EMA 指数移动平均
  */
 const exponentialMovingAverage: IndicatorTemplate<Ema> = {
-  name: 'EMA10',
+  name: 'EMA1020',
   shortName: 'EMA',
   series: IndicatorSeries.Price,
-  calcParams: [10],
+  calcParams: [10, 20],
   precision: 2,
   shouldOhlc: true,
-  figures: [{ key: 'ema1', title: 'EMA10: ', type: 'line' }],
+  figures: [
+    { key: 'ema1', title: 'EMA10: ', type: 'line' },
+    { key: 'ema2', title: 'EMA20: ', type: 'line' },
+  ],
   regenerateFigures: (params: any[]) => {
     return params.map((p: number, i: number) => {
       return { key: `ema${i + 1}`, title: `EMA${p}: `, type: 'line' };
