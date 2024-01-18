@@ -82,11 +82,7 @@ const App = (props: { store: Store }) => {
           onChange={(e) => setTicker(e.target.value.toUpperCase())}
           value={ticker}
           required
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              apply();
-            }
-          }}
+          onKeyDown={(e) => e.key === 'Enter' && apply()}
         ></Input>
         <InputNumber min={1} step={1} value={multiplier} onChange={(v) => setMultiplier(v!)} required />
         <Select
